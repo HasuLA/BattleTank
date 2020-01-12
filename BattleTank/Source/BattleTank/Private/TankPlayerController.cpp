@@ -2,6 +2,8 @@
 
 #include "TankPlayerController.h"
 #include "BattleTank.h"
+#include "Engine/World.h"
+#include "Camera/PlayerCameraManager.h"
 
 void ATankPlayerController::BeginPlay()
 {
@@ -36,7 +38,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 	FVector OutHitLocation;
 	if (GetSightRayHitLocation(OutHitLocation)) // Has "side-effect", is going to line trace
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("Look direction: %s"), *OutHitLocation.ToString());
+		// UE_LOG(LogTemp, Warning, TEXT("Hit location: %s"), *OutHitLocation.ToString());
 		// TODO Tell controlled tank to aim at this point
 	}
 }
@@ -48,24 +50,47 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
 	FVector2D ScreenLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation);
 	FVector LookDirection;
+
 	// "De-project" the screen position of the crosshair to a world direction
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Look direction: %sz"), *LookDirection.ToString());
+		// Line-trace along that LookDirection and see what we hit (up to max range)
+		GetLookVectorHitLocation(LookDirection, OutHitLocation);
+
+		return true;
 	}
-	// Line-trace along that LookDirection and see what we hit (up to max range)
+
+	return false;
+}
+
+bool  ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& OutHitLocation) const 
+{
+	FHitResult HitResult;
+	FVector StartLocation = PlayerCameraManager->GetCameraLocation();
+	FVector EndLocation = StartLocation + (LookDirection * LineTraceRange);
+
+	if (GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECollisionChannel::ECC_Visibility
+		)
+	)
+	{
+		OutHitLocation = HitResult.Location;
+		return true;
+	}
+	OutHitLocation = FVector(0);
 	return false;
 }
 
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
 {
 	FVector CameraWorldLocation; // To be discarded
-	DeprojectScreenPositionToWorld(
+	return DeprojectScreenPositionToWorld (
 		ScreenLocation.X,
 		ScreenLocation.Y,
 		CameraWorldLocation, 
-		LookDirection);
-	
-	
-
+		LookDirection
+	);
 }
