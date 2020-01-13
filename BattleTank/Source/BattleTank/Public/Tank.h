@@ -39,5 +39,7 @@ private:
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SomePrivateFunc Log"))
 	}
-	
+
+	UPROPERTY(EditAnywhere, Category = Firing)
+		float LaunchSpeed = 10000; // Find sensible defaulth
 };
