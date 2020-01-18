@@ -2,7 +2,6 @@
 
 #pragma once
 
-
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h"
@@ -26,6 +25,5 @@ public:
 	
 private:
 	UTankBarrel* Barrel = nullptr;
-
 	void MoveBarrelTowards(FVector AimDirection);
 };

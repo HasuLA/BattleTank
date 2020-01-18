@@ -2,6 +2,7 @@
 
 #include "TankAIController.h"
 #include "BattleTank.h"
+#include "Tank.h"
 #include "Engine/World.h"
 
 void ATankAIController::BeginPlay()
@@ -17,8 +18,6 @@ void ATankAIController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AIController found player: %s"), *(PlayerTank->GetName()));
 	}
-	
-	
 }
 
 // Called every frame
