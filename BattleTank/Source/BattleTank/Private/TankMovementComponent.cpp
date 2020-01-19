@@ -5,17 +5,31 @@
 
 void UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
 {
-	if (!LeftTrackToSet || !RightTrackToSet) { return;  }
+	
 	LeftTrack = LeftTrackToSet;
-	RigthTrack = RightTrackToSet;
+	RightTrack = RightTrackToSet;
 }
 
 void UTankMovementComponent::IntendMovementForward(float Throw) 
 {
-	UE_LOG(LogTemp, Warning, TEXT("Intend move forward throw: %f"), Throw);
-
+	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
-	RigthTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(Throw);
+	// TODO prevent double-speed dut to dual control use in Intend methods
+}
+
+void UTankMovementComponent::IntendTurnRight(float Throw)
+{
+	if (!LeftTrack || !RightTrack) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
+}
+
+void UTankMovementComponent::IntendTurnLeft(float Throw)
+{
+	if (!LeftTrack || !RightTrack) { return; }
+	LeftTrack->SetThrottle(-Throw);
+	RightTrack->SetThrottle(Throw);
 }
 
 
