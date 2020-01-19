@@ -16,7 +16,6 @@ ATank::ATank()
 	PrimaryActorTick.bCanEverTick = false;
 	// No need to protect points as added to constuction
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("AimingComponent"));
-	TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("MovementComponent"));
 }
 
 // Called when the game starts or when spawned
