@@ -28,9 +28,6 @@ public:
 	// TODO check best protection
 	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
 	
-	UFUNCTION(BlueprintCallable, Category = Input)
-	void IntendTurnLeft(float Throw);
-
 private:
 	UTankTrack* LeftTrack = nullptr;
 	UTankTrack* RightTrack = nullptr;
