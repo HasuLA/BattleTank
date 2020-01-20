@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright EmbraceIT Ltd.
 
 #include "TankMovementComponent.h"
 #include "TankTrack.h"
@@ -22,8 +22,6 @@ void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool
 
 	float RigthThrow = FVector::CrossProduct(TankForward, AIForwardIntention).Z;
 	IntendTurnRight(RigthThrow);
-
-	// UE_LOG(LogTemp, Warning, TEXT("%s vectoring to %s"), *TankName, *MoveVelocityString);
 }
 
 void UTankMovementComponent::IntendMovementForward(float Throw) 
@@ -31,7 +29,6 @@ void UTankMovementComponent::IntendMovementForward(float Throw)
 	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
-	// TODO prevent double-speed dut to dual control use in Intend methods
 }
 
 void UTankMovementComponent::IntendTurnRight(float Throw)
