@@ -23,6 +23,7 @@ public:
 	// Sets default values for this pawn's properties
 	ATank();
 
+	virtual void BeginPlay() override;
 
 	void AimAt(FVector HitLocation);
 
@@ -32,8 +33,7 @@ public:
 	
 
 protected:
-	
-
+	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingComponent = nullptr; 
 
 	UPROPERTY(BlueprintReadOnly)
