@@ -28,8 +28,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	
-
 	UProjectileMovementComponent * ProjectileMovement = nullptr;
 	
 };
