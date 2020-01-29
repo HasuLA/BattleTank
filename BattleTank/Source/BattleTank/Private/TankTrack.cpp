@@ -2,6 +2,25 @@
 
 #include "TankTrack.h"
 
+UTankTrack::UTankTrack()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UTankTrack::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	// calculate the slippage speed
+	float SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
+	// Work-out	 the required acceleration this frame to correct
+	FVector CorrectionAcceleration = -SlippageSpeed / DeltaTime * GetRightVector();
+	// Calculate and apply sideways force 
+	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
+
+	FVector CorrectionForce = (TankRoot->GetMass() * CorrectionAcceleration) / 2;
+	TankRoot->AddForce(CorrectionForce);
+}
+
 void UTankTrack::SetThrottle(float Throttle)
 {
 	FString Name = GetName();
