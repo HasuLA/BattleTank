@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankTrack.h"
+#include "Engine/World.h"
 
 UTankTrack::UTankTrack()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UTankTrack::BeginPlay()
@@ -15,15 +16,21 @@ void UTankTrack::BeginPlay()
 
 void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("I'm hit!"))
+	// Drive the tracks
+	DriveTrack();	
+	// Apply sideway force
+	ApplySidewaysForce();
+	CurrentThrottle = 0;
 }
 
-void UTankTrack::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+
+
+void UTankTrack::ApplySidewaysForce()
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// calculate the slippage speed
 	float SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
 	// Work-out	 the required acceleration this frame to correct
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 	FVector CorrectionAcceleration = -SlippageSpeed / DeltaTime * GetRightVector();
 	// Calculate and apply sideways force 
 	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
@@ -34,8 +41,13 @@ void UTankTrack::TickComponent(float DeltaTime, enum ELevelTick TickType, FActor
 
 void UTankTrack::SetThrottle(float Throttle)
 {
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, +1);
+}
+
+void UTankTrack::DriveTrack()
+{
 	FString Name = GetName();
-	FVector ForceApplied = GetForwardVector() * Throttle * TrackMaxDrivingForce;
+	FVector ForceApplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
 	FVector ForceLocation = GetComponentLocation();
 	UPrimitiveComponent* TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
