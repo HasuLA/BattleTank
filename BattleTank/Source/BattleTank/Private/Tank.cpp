@@ -4,6 +4,8 @@
 #include "Engine/World.h"
 
 
+
+
 // Sets default values
 ATank::ATank()
 {
@@ -22,7 +24,10 @@ float ATank::TakeDamage(float DamageAmount, struct FDamageEvent const & DamageEv
 		UE_LOG(LogTemp, Warning, TEXT("Tank died"))
 	}
 
-	
-
 	return DamageToApply;
+}
+
+float ATank::GetHealthPercent() const
+{
+	return (float)CurrentHealth / (float)StartingHealth;
 }
