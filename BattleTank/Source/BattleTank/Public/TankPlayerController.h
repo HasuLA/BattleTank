@@ -6,6 +6,7 @@
 #include "TankPlayerController.generated.h"  // Must be the last include
 
 class UTankAimingComponent;
+class ATank;
 
 /**
  * Responsible for helping the player aim.
@@ -22,6 +23,10 @@ protected:
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+	void OnPossessedTankDeath();
 
 	// Start the tank moving the barrel so that a shot would hit where
 	// the crosshair intersects the world

@@ -7,6 +7,7 @@
 #include "TankAIController.generated.h"
 
 class UTankAimingComponent;
+class ATank;
 
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
@@ -18,7 +19,11 @@ protected:
 	float AcceptanceRadius = 8000;
 private:
 	virtual void BeginPlay() override;
+
+	virtual void SetPawn(APawn* InPawn) override;
+
 	virtual void Tick(float DeltaTime) override;
-	
-	
+
+	UFUNCTION()
+	void OnPossessedTankDeath();
 }; 
