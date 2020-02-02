@@ -10,6 +10,7 @@ class UProjectileMovementComponent;
 class UParticleSystemComponent;
 class UStaticMeshComponent;
 class URadialForceComponent;
+class UGameplayStatics;
 class UWorld;
 
 UCLASS()
@@ -35,6 +36,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float DestroyDelay = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		float ProjectileDamage = 20.f;
 
 	UProjectileMovementComponent * ProjectileMovement = nullptr;
 
