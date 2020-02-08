@@ -19,39 +19,43 @@ class BATTLETANK_API AProjectile : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AProjectile();
 
 	void LaunchProjectile(float Speed);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void BindOnProjectileHit();
 
 private:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	void OnTimerExpire();
+	void HandleProjectileDestruction();
+
+	void Explode();
+
+	void HandleVisualEffects();
+
+	void DestroyOnTimerExpire();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float DestroyDelay = 5.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-		float ProjectileDamage = 20.f;
+	float ProjectileDamage = 20.f;
 
-	UProjectileMovementComponent * ProjectileMovement = nullptr;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* CollisionMesh = nullptr;
+	UProjectileMovementComponent * ProjectileMovement;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UParticleSystemComponent* LaunchBlast = nullptr;
+	UStaticMeshComponent* CollisionMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UParticleSystemComponent* ImpactBlast = nullptr;
+	UParticleSystemComponent* LaunchBlast;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	URadialForceComponent* ExplosionForce = nullptr;
-	
+	UParticleSystemComponent* ImpactBlast;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	URadialForceComponent* ExplosionForce;
 };

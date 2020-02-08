@@ -3,14 +3,11 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
-#include "TankPlayerController.generated.h"  // Must be the last include
+#include "TankPlayerController.generated.h"
 
 class UTankAimingComponent;
 class ATank;
 
-/**
- * Responsible for helping the player aim.
- */
 UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
 {
@@ -18,7 +15,7 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 	
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
-		void FoundAimingComponent(UTankAimingComponent* AimCompRef);
+	void OnAimingComponentFound(UTankAimingComponent* AimCompRef);
 
 private:
 	virtual void BeginPlay() override;
@@ -28,7 +25,7 @@ private:
 	UFUNCTION()
 	void OnPossessedTankDeath();
 
-	// Start the tank moving the barrel so that a shot would hit where
+	// Start moving the barrel so that a shot would hit where
 	// the crosshair intersects the world
 	void AimTowardsCrosshair();
 	bool GetSightRayHitLocation(FVector& OutHitLocation) const;
@@ -36,9 +33,9 @@ private:
 	bool GetLookVectorHitLocation(FVector LookDirection, FVector& OutHitLocation) const;
 
 	UPROPERTY(EditDefaultsOnly)
-		float CrosshairXLocation = 0.5;
+	float CrosshairXLocation = 0.5;
 	UPROPERTY(EditDefaultsOnly)
-		float CrosshairYLocation = 0.33333;
+	float CrosshairYLocation = 0.33333;
 	UPROPERTY(EditDefaultsOnly)
-		float LineTraceRange = 1000000;
+	float LineTraceRange = 1000000;
 };

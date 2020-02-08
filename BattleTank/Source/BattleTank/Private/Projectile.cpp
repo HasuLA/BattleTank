@@ -6,16 +6,12 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/RadialForceComponent.h" 
-
 #include "GameFramework/ProjectileMovementComponent.h"
 
-
-
-// Sets default values
 AProjectile::AProjectile()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Collision Mesh"));
 	SetRootComponent(CollisionMesh);
 	CollisionMesh->SetNotifyRigidBodyCollision(true);
@@ -35,10 +31,15 @@ AProjectile::AProjectile()
 	ExplosionForce->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
-// Called when the game starts or when spawned
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	BindOnProjectileHit();
+}
+
+void AProjectile::BindOnProjectileHit()
+{
 	CollisionMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 }
 
@@ -50,12 +51,20 @@ void AProjectile::LaunchProjectile(float Speed)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	HandleVisualEffects();
+	Explode();
+	HandleProjectileDestruction();
+}
+
+void AProjectile::HandleVisualEffects()
+{
 	LaunchBlast->Deactivate();
 	ImpactBlast->Activate();
-	ExplosionForce->FireImpulse();
-	SetRootComponent(ImpactBlast);
-	CollisionMesh->DestroyComponent();
+}
 
+void AProjectile::Explode()
+{
+	ExplosionForce->FireImpulse();
 	UGameplayStatics::ApplyRadialDamage(
 		this,
 		ProjectileDamage,
@@ -63,13 +72,18 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 		ExplosionForce->Radius, // for consistancy
 		UDamageType::StaticClass(),
 		TArray<AActor*>() // damage all actors 
-		);
-
-	FTimerHandle Timer;
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AProjectile::OnTimerExpire, DestroyDelay, false);
+	);
 }
 
-void AProjectile::OnTimerExpire()
+void AProjectile::HandleProjectileDestruction()
+{
+	SetRootComponent(ImpactBlast);
+	CollisionMesh->DestroyComponent();
+
+	GetWorld()->GetTimerManager().SetTimer(*new FTimerHandle(), this, &AProjectile::DestroyOnTimerExpire, DestroyDelay, false);
+}
+
+void AProjectile::DestroyOnTimerExpire()
 {
 	Destroy();
 }

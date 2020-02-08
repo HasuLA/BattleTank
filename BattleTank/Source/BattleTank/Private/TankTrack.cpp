@@ -11,37 +11,20 @@ UTankTrack::UTankTrack()
 void UTankTrack::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BindOnComponentHit();
+}
+
+void UTankTrack::BindOnComponentHit()
+{
 	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit);
 }
 
 void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Drive the tracks
 	DriveTrack();	
-	// Apply sideway force
 	ApplySidewaysForce();
-	CurrentThrottle = 0;
-}
-
-
-
-void UTankTrack::ApplySidewaysForce()
-{
-	// calculate the slippage speed
-	float SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
-	// Work-out	 the required acceleration this frame to correct
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
-	FVector CorrectionAcceleration = -SlippageSpeed / DeltaTime * GetRightVector();
-	// Calculate and apply sideways force 
-	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
-
-	FVector CorrectionForce = (TankRoot->GetMass() * CorrectionAcceleration) / 2; // Two tracks
-	TankRoot->AddForce(CorrectionForce);
-}
-
-void UTankTrack::SetThrottle(float Throttle)
-{
-	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, +1);
+	ResetCurrenThrottle();
 }
 
 void UTankTrack::DriveTrack()
@@ -52,5 +35,32 @@ void UTankTrack::DriveTrack()
 	UPrimitiveComponent* TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
 }
+
+void UTankTrack::ApplySidewaysForce()
+{
+	// calculate the slippage speed
+	float SlippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
+
+	// Work-out	 the required acceleration this frame to correct
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+	FVector CorrectionAcceleration = -SlippageSpeed / DeltaTime * GetRightVector();
+
+	// Calculate and apply sideways force 
+	UStaticMeshComponent* TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
+	FVector CorrectionForce = (TankRoot->GetMass() * CorrectionAcceleration) / 2; // Two tracks
+	TankRoot->AddForce(CorrectionForce);
+}
+
+void UTankTrack::ResetCurrenThrottle()
+{
+	CurrentThrottle = 0;
+}
+
+void UTankTrack::SetThrottle(float Throttle)
+{
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + Throttle, -1, +1);
+}
+
+
 
 
