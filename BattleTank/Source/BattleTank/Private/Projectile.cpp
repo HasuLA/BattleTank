@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/RadialForceComponent.h" 
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "CustomCollisionChannels.h"
 
 AProjectile::AProjectile()
 {
@@ -71,7 +72,11 @@ void AProjectile::Explode()
 		GetActorLocation(),
 		ExplosionForce->Radius, // for consistancy
 		UDamageType::StaticClass(),
-		TArray<AActor*>() // damage all actors 
+		TArray<AActor*>(), // damage all actors
+		this,
+		GetInstigatorController(),
+		false,
+		TRACE_DamagePreventionChannel
 	);
 }
 
