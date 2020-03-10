@@ -41,7 +41,7 @@ void ATankAIController::Tick(float DeltaTime)
 	APawn* PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
 	APawn* ControlledTank = GetPawn();
 	
-	if (ensure(PlayerTank && ControlledTank)) 
+	if (PlayerTank && ControlledTank) 
 	{  
 		MoveToActor(PlayerTank, MinDistanceFromPlayerToKeep); 
 		AimAtPlayer(ControlledTank, PlayerTank);
