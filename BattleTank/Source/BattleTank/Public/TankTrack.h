@@ -7,6 +7,7 @@
 #include "TankTrack.generated.h"
 
 class UWorld;
+class ASprungWheel;
 
 /**
  * Tank Track is used to set maximum driving force, and to apply forces to the tank.
@@ -29,14 +30,7 @@ protected:
 private:
 	UTankTrack();
 
-	virtual void BeginPlay() override;
-	void BindOnComponentHit();
+	TArray<ASprungWheel*> GetWheels() const;
 
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	void DriveTrack();
-	void ApplySidewaysForce();
-	void ResetCurrenThrottle();
-
-	float CurrentThrottle = 0;
+	void DriveTrack(float CurrentThrottle);	
 };
